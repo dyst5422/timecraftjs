@@ -1276,4 +1276,36 @@ export class Spice {
         return { ptarg, lt };
     }
 
+    reclat(rectan) {
+        const Module = this.module;
+        // create input pointer
+
+        const rectan_ptr = Module._malloc(DOUBLE_SIZE * 3);
+        Module.setValue(rectan_ptr + DOUBLE_SIZE * 0, rectan[0], DOUBLE_TYPE);
+        Module.setValue(rectan_ptr + DOUBLE_SIZE * 1, rectan[1], DOUBLE_TYPE);
+        Module.setValue(rectan_ptr + DOUBLE_SIZE * 2, rectan[2], DOUBLE_TYPE);
+
+        // create output pointers
+        const radius_ptr = Module._malloc(DOUBLE_SIZE);
+        const lon_ptr = Module._malloc(DOUBLE_SIZE);
+        const lat_ptr = Module._malloc(DOUBLE_SIZE);
+
+        Module.ccall(
+            'reclat_c',
+            null,
+            /* ConstSpiceDouble rectan[3], SpiceDouble radius, SpiceDouble lon, SpiceDouble lat */
+            [ 'number', 'number', 'number', 'number' ],
+            [ rectan_ptr, radius_ptr, lon_ptr, lat_ptr ],
+        );
+
+        // read and free output pointers
+        const radius = Module.getValue(radius_ptr, 'double');
+        Module._free(radius_ptr);
+        const lon = Module.getValue(lon_ptr, 'double');
+        Module._free(lon_ptr);
+        const lat = Module.getValue(lat_ptr, 'double');
+        Module._free(lat_ptr);
+
+        return { radius, lat, lon };
+    }
 }

@@ -177,6 +177,12 @@ function runTests(type) {
             sunDir = sunDir.map(v => v / dirLen);
 
             expect(sunDir.map(v => parseFloat(v.toFixed(4)))).toEqual([0.4431, -0.2725, -0.8540]);
+
+            expect(spiceInstance.reclat([10, 20, 30])).toMatchObject({
+                lat: 0.9302740141154721,
+                lon: 1.1071487177940904,
+                radius: 37.41657386773941,
+            });
         });
 
         it('should perform chronos conversions.', () => {
@@ -191,4 +197,3 @@ function runTests(type) {
         });
     });
 }
-
